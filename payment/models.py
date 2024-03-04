@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
+# creamos clase de envio a domicilio
 class ShippingAddress(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 	full_name = models.CharField(max_length=255)
@@ -14,7 +14,7 @@ class ShippingAddress(models.Model):
 	country = models.CharField(max_length=255)
 
 
-	# Don't pluralize address
+	# este argumento verbose de la clase Meta es para que el plural no aparezca erroneo en admin
 	class Meta:
 		verbose_name_plural = "Shipping Address"
 
