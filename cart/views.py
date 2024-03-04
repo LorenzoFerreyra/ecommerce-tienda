@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 
 def cart_summary(request):
-	# Get the cart
+	# obtenemos el carrito
 	cart = Cart(request)
 	cart_products = cart.get_prods
 	quantities = cart.get_quants
@@ -16,54 +16,51 @@ def cart_summary(request):
 
 
 def cart_add(request):
-	# Get the cart
+	# obtenemos el carrito
 	cart = Cart(request)
-	# test for POST
+	# condicional para evaluar solicitud
 	if request.POST.get('action') == 'post':
-		# Get stuff
+		# obtenemos id y cantidad de producto
 		product_id = int(request.POST.get('product_id'))
 		product_qty = int(request.POST.get('product_qty'))
 
-		# lookup product in DB
+		# se busca producto en DB
 		product = get_object_or_404(Product, id=product_id)
 		
-		# Save to session
+		# guardamos en sesión (ver funcion add en clase correspondiente)
 		cart.add(product=product, quantity=product_qty)
 
-		# Get Cart Quantity
+		# obtenemos cantidad
 		cart_quantity = cart.__len__()
 
-		# Return resonse
-		# response = JsonResponse({'Product Name: ': product.name})
+		# retornamos response
 		response = JsonResponse({'qty': cart_quantity})
-		messages.success(request, ("Product Added To Cart..."))
+		messages.success(request, ("Producto añadido a carrito..."))
 		return response
 
 def cart_delete(request):
 	cart = Cart(request)
 	if request.POST.get('action') == 'post':
-		# Get stuff
+		# obtenemos id de producto
 		product_id = int(request.POST.get('product_id'))
-		# Call delete Function in Cart
+		# llamamos funcion borrar
 		cart.delete(product=product_id)
 
 		response = JsonResponse({'product':product_id})
-		#return redirect('cart_summary')
-		messages.success(request, ("Item Deleted From Shopping Cart..."))
+		messages.success(request, ("Producto quitado de carrito."))
 		return response
 
 
 def cart_update(request):
 	cart = Cart(request)
 	if request.POST.get('action') == 'post':
-		# Get stuff
+		# Obtenemos id y cantidad
 		product_id = int(request.POST.get('product_id'))
 		product_qty = int(request.POST.get('product_qty'))
 
 		cart.update(product=product_id, quantity=product_qty)
 
 		response = JsonResponse({'qty':product_qty})
-		#return redirect('cart_summary')
-		messages.success(request, ("Your Cart Has Been Updated..."))
+		messages.success(request, ("Carrito actualizado."))
 		return response
 
