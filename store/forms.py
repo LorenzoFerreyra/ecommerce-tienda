@@ -3,7 +3,10 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm, SetPassw
 from django import forms
 from .models import Profile
 
-
+# Aquí se crean las clases de los formularios necesarios para la tienda
+# nótese que todos ellos cruzan su lógica con los atributos de bootstrap, de ahí su complejidad
+# Este formulario está vinculado al modelo Profile
+# y se utiliza para actualizar la información del perfil del usuario.
 class UserInfoForm(forms.ModelForm):
 	phone = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Phone'}), required=False)
 	address1 = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Address 1'}), required=False)
@@ -18,7 +21,7 @@ class UserInfoForm(forms.ModelForm):
 		fields = ('phone', 'address1', 'address2', 'city', 'state', 'zipcode', 'country', )
 
 
-
+#  se utiliza para cambiar la contraseña del usuario.
 class ChangePasswordForm(SetPasswordForm):
 	class Meta:
 		model = User
@@ -36,11 +39,11 @@ class ChangePasswordForm(SetPasswordForm):
 		self.fields['new_password2'].widget.attrs['placeholder'] = 'Confirm Password'
 		self.fields['new_password2'].label = ''
 		self.fields['new_password2'].help_text = '<span class="form-text text-muted"><small>Enter the same password as before, for verification.</small></span>'
-
+# para actualizar la información del usuario.
 class UpdateUserForm(UserChangeForm):
-	# Hide Password stuff
+	# Se esconde el campo de contraseña
 	password = None
-	# Get other fields
+	# se hace un get de los demás campos
 	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}), required=False)
 	first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'First Name'}), required=False)
 	last_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Last Name'}), required=False)
@@ -57,7 +60,7 @@ class UpdateUserForm(UserChangeForm):
 		self.fields['username'].label = ''
 		self.fields['username'].help_text = '<span class="form-text text-muted"><small>Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</small></span>'
 
-		
+# para registrar un nuevo usuario	
 class SignUpForm(UserCreationForm):
 	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}))
 	first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'First Name'}))
