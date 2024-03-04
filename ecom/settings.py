@@ -17,7 +17,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-# Application definition
+# Agregamos store, cart y payment, las apps del proyecto central ecom
 
 INSTALLED_APPS = [
     'django.contrib.admin',
