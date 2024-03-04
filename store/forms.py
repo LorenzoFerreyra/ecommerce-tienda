@@ -36,7 +36,7 @@ class ChangePasswordForm(SetPasswordForm):
 		self.fields['new_password1'].help_text = '<ul class="form-text text-muted small"><li>Your password can\'t be too similar to your other personal information.</li><li>Your password must contain at least 8 characters.</li><li>Your password can\'t be a commonly used password.</li><li>Your password can\'t be entirely numeric.</li></ul>'
 
 		self.fields['new_password2'].widget.attrs['class'] = 'form-control'
-		self.fields['new_password2'].widget.attrs['placeholder'] = 'Confirm Password'
+		self.fields['new_password2'].widget.attrs['placeholder'] = 'Confirmar Password'
 		self.fields['new_password2'].label = ''
 		self.fields['new_password2'].help_text = '<span class="form-text text-muted"><small>Enter the same password as before, for verification.</small></span>'
 # para actualizar la información del usuario.
@@ -44,9 +44,9 @@ class UpdateUserForm(UserChangeForm):
 	# Se esconde el campo de contraseña
 	password = None
 	# se hace un get de los demás campos
-	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}), required=False)
-	first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'First Name'}), required=False)
-	last_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Last Name'}), required=False)
+	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email'}), required=False)
+	first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Nombre'}), required=False)
+	last_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Apellido'}), required=False)
 
 	class Meta:
 		model = User
@@ -56,15 +56,15 @@ class UpdateUserForm(UserChangeForm):
 		super(UpdateUserForm, self).__init__(*args, **kwargs)
 
 		self.fields['username'].widget.attrs['class'] = 'form-control'
-		self.fields['username'].widget.attrs['placeholder'] = 'User Name'
+		self.fields['username'].widget.attrs['placeholder'] = 'Nombre de Usuario'
 		self.fields['username'].label = ''
 		self.fields['username'].help_text = '<span class="form-text text-muted"><small>Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</small></span>'
 
 # para registrar un nuevo usuario	
 class SignUpForm(UserCreationForm):
-	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}))
-	first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'First Name'}))
-	last_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Last Name'}))
+	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email'}))
+	first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Nombre'}))
+	last_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Apellido'}))
 
 	class Meta:
 		model = User
