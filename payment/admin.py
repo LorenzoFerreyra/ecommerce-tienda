@@ -2,6 +2,6 @@ from django.contrib import admin
 from .models import ShippingAddress
 
 
-# Register the model on the admin section thing
+# registramos el modelo para que aparezca en la seccion de administrador
 admin.site.register(ShippingAddress)
 
