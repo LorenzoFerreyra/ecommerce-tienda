@@ -12,14 +12,15 @@ from cart.cart import Cart
 
 
 def search(request):
-	# Determine if they filled out the form
+	# manera de preguntarse si llenaron el formulario correspondiente
 	if request.method == "POST":
 		searched = request.POST['searched']
-		# Query The Products DB Model
+		# consultamos al db por el producto buscado
+		# notar icontains y Q que son elementos de Django para hacer búsquedas complejas
 		searched = Product.objects.filter(Q(name__icontains=searched) | Q(description__icontains=searched))
-		# Test for null
+		# evitamos los valores nulos
 		if not searched:
-			messages.success(request, "That Product Does Not Exist...Please try Again.")
+			messages.success(request, "El producto no existe. Inténtelo de nuevo.")
 			return render(request, "search.html", {})
 		else:
 			return render(request, "search.html", {'searched':searched})
@@ -34,11 +35,11 @@ def update_info(request):
 
 		if form.is_valid():
 			form.save()
-			messages.success(request, "Your Info Has Been Updated!!")
+			messages.success(request, "Información actualizada.")
 			return redirect('home')
 		return render(request, "update_info.html", {'form':form})
 	else:
-		messages.success(request, "You Must Be Logged In To Access That Page!!")
+		messages.success(request, "Debe iniciar sesión para acceder a esa sección.")
 		return redirect('home')
 
 
@@ -46,13 +47,13 @@ def update_info(request):
 def update_password(request):
 	if request.user.is_authenticated:
 		current_user = request.user
-		# Did they fill out the form
+		# testeamos método para saber si llenaron el formulario
 		if request.method  == 'POST':
 			form = ChangePasswordForm(current_user, request.POST)
-			# Is the form valid
+			# validación de formulario
 			if form.is_valid():
 				form.save()
-				messages.success(request, "Your Password Has Been Updated...")
+				messages.success(request, "Se actualizó la contraseña.")
 				login(request, current_user)
 				return redirect('update_user')
 			else:
@@ -63,7 +64,7 @@ def update_password(request):
 			form = ChangePasswordForm(current_user)
 			return render(request, "update_password.html", {'form':form})
 	else:
-		messages.success(request, "You Must Be Logged In To View That Page...")
+		messages.success(request, "Debe iniciar sesión para ver esa página.")
 		return redirect('home')
 def update_user(request):
 	if request.user.is_authenticated:
@@ -74,11 +75,11 @@ def update_user(request):
 			user_form.save()
 
 			login(request, current_user)
-			messages.success(request, "User Has Been Updated!!")
+			messages.success(request, "Usuario actualizado")
 			return redirect('home')
 		return render(request, "update_user.html", {'user_form':user_form})
 	else:
-		messages.success(request, "You Must Be Logged In To Access That Page!!")
+		messages.success(request, "Debe iniciar sesión para ver esa página.")
 		return redirect('home')
 
 
@@ -96,7 +97,7 @@ def category(request, foo):
 		products = Product.objects.filter(category=category)
 		return render(request, 'category.html', {'products':products, 'category':category})
 	except:
-		messages.success(request, ("That Category Doesn't Exist..."))
+		messages.success(request, ("Categoría inexistente"))
 		return redirect('home')
 
 
@@ -121,25 +122,26 @@ def login_user(request):
 		if user is not None:
 			login(request, user)
 
-			# Do some shopping cart stuff
+			# recuperamos el carrito de compras guardado del usuario desde la base de datos.
+			# Esto se hace utilizando con el modelo Profile y el campo old_cart.
+			# El carrito de compras guardado se almacena como una cadena JSON en el campo old_cart.
 			current_user = Profile.objects.get(user__id=request.user.id)
-			# Get their saved cart from database
 			saved_cart = current_user.old_cart
-			# Convert database string to python dictionary
+			# convertir string de db a dict
 			if saved_cart:
-				# Convert to dictionary using JSON
+				# convertir a diccionario con JSON
 				converted_cart = json.loads(saved_cart)
-				# Add the loaded cart dictionary to our session
-				# Get the cart
+				# añadimos el diccionario cargado a la sesion
+				# obtenemos el carrito
 				cart = Cart(request)
-				# Loop thru the cart and add the items from the database
+				# hacemos un loop del carrito y lo añadimos con la funcion db_add
 				for key,value in converted_cart.items():
 					cart.db_add(product=key, quantity=value)
 
-			messages.success(request, ("You Have Been Logged In!"))
+			messages.success(request, ("Ha iniciado sesión."))
 			return redirect('home')
 		else:
-			messages.success(request, ("There was an error, please try again..."))
+			messages.success(request, ("Error. Inténtelo otra vez."))
 			return redirect('login')
 
 	else:
@@ -148,7 +150,7 @@ def login_user(request):
 
 def logout_user(request):
 	logout(request)
-	messages.success(request, ("You have been logged out...Thanks for stopping by..."))
+	messages.success(request, ("Cerró sesión. Gracias por visitarnos."))
 	return redirect('home')
 
 
@@ -161,13 +163,13 @@ def register_user(request):
 			form.save()
 			username = form.cleaned_data['username']
 			password = form.cleaned_data['password1']
-			# log in user
+			# loguear usuario luego de autenticar con la funcion integrada de django
 			user = authenticate(username=username, password=password)
 			login(request, user)
-			messages.success(request, ("Username Created - Please Fill Out Your User Info Below..."))
+			messages.success(request, ("Nombre de usuario creado. Complete el siguiente formulario."))
 			return redirect('update_info')
 		else:
-			messages.success(request, ("Whoops! There was a problem Registering, please try again..."))
+			messages.success(request, ("Hubo un problema al registrarse. Inténtelo otra vez."))
 			return redirect('register')
 	else:
 		return render(request, 'register.html', {'form':form})
