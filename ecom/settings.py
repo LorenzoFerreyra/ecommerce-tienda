@@ -20,6 +20,9 @@ ALLOWED_HOSTS = []
 # Agregamos store, cart y payment, las apps del proyecto central ecom
 
 INSTALLED_APPS = [
+
+    'admin_tools_stats',
+    'django_nvd3',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
