@@ -1,6 +1,8 @@
 from .cart import Cart
 
-# Create context processor so our cart can work on all pages of the site
+# este un procesador de contexto para que el carrito figure en todos los templates de la tienda
+# da datos adicionales a todos los templates
+# se basa en la solicitud (request) actual.
 def cart(request):
 	# Return the default data from our Cart
 	return {'cart': Cart(request)}
