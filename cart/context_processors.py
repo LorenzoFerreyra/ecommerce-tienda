@@ -4,5 +4,5 @@ from .cart import Cart
 # da datos adicionales a todos los templates
 # se basa en la solicitud (request) actual.
 def cart(request):
-	# Return the default data from our Cart
+	# retornamos la data en forma de diccionario segun request actual
 	return {'cart': Cart(request)}
