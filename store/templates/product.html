@@ -68,7 +68,9 @@
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 
 <script>
-// Check if button pressed
+// la funcion JavaScript (con AJAX, para manejo asincrono) manejará la solicitud de forma asíncrona.
+// lo que se quiere lograr es agregar un producto al carrito de compras sin recargar la página,
+// mediante una solicitud AJAX para enviar los datos al servidor y luego actualizar la cantidad de productos en el carrito.
 $(document).on('click', '#add-cart', function(e){
     e.preventDefault();
     $.ajax({
