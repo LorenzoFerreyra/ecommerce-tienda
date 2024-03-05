@@ -1,5 +1,4 @@
 from django.db import models
-import datetime
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -90,8 +89,10 @@ class Product(models.Model):
 
 # orden de compra
 class Order(models.Model):
+    id = models.AutoField(primary_key=True, editable=False)    
     first_name = models.CharField(max_length=50, default="Cliente")
     last_name = models.CharField(max_length=50, default="Al mostrador")
+    dni = models.IntegerField()
     email = models.EmailField(max_length=100, blank=True)
     address = models.CharField(max_length=250, blank=True)
     postal_code = models.CharField(max_length=20, blank=True)

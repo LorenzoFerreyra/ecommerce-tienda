@@ -19,7 +19,6 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ['id', 'first_name', 'last_name', 'email']
     inlines = [OrderItemInline]
 
-# admin.site.register(OrderItem) # Esta línea también puede ser eliminada
 
 # Mostrar User y Profile en la misma página que la información del usuario.
 class ProfileInline(admin.StackedInline):
