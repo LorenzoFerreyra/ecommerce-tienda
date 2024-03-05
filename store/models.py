@@ -93,7 +93,13 @@ class Order(models.Model):
     phone = models.CharField(max_length=20, default='', blank=True)
     date = models.DateField(default=datetime.datetime.today)
     status = models.BooleanField(default=False)
-    payment_method = models.CharField(max_length=100)
+    PAYMENT_CHOICES = [
+        ('cash', 'Efectivo'),
+        ('card', 'Tarjeta de crédito'),
+        ('transfer', 'Transferencia bancaria'),
+        # Agrega más opciones aquí si lo deseas
+    ]
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_CHOICES, default="cash")
 
     def __str__(self):
         return f'{self.customer.username} - {self.product.name}'

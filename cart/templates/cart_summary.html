@@ -87,7 +87,8 @@
             <h3>En total es ${{ totals }}</h3>
           <!-- Botón "Confirmar compra" -->
 <div class="text-center mt-3">
-  <button type="button" class="btn btn-primary">Confirmar compra</button>
+  <a href="{% url 'confirm_purchase' %}" class="btn btn-secondary">Confirmar compra</a>
+
 </div>
             <br/><br/><br/>
         	{% else %}

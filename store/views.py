@@ -179,14 +179,16 @@ def confirm_purchase(request):
     if request.method == 'POST':
         form = ConfirmPurchaseForm(request.POST)
         if form.is_valid():
-            # aquíse procesan los datos del formulario
+            # Aquí se procesan los datos del formulario
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             ID = form.cleaned_data['ID']
             payment_method = form.cleaned_data['payment_method']
             # Luego se llevan adelante las acciones necesarias con estos datos
             # (por ejemplo, guardarlos en la base de datos, crear una venta, etc.)
-            return render(request, 'confirm_purchase_success.html')
+            messages.success(request, "Venta ingresada con éxito.")
+            return redirect('home')
     else:
         form = ConfirmPurchaseForm()
+
     return render(request, 'confirm_purchase.html', {'form': form})
