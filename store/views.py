@@ -209,7 +209,7 @@ def order_create(request):
                 
                 return render(request, 'order_created.html', {'order': order, 'cart': cart})
             else:
-                messages.success("DNI inválido. Inténtelo de nuevo.")
+                messages.success(request, ("DNI inválido. Inténtelo de nuevo."))
                 # Por ejemplo, mostrar un mensaje de error al usuario
                 error_message = "Error al consultar la API de RENIEC. Por favor, intenta nuevamente más tarde."
                 return render(request, 'order_create.html', {'cart': cart, 'form': form, 'error_message': error_message})
