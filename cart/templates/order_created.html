@@ -3,5 +3,12 @@
 {% block content %}
 <h1>Orden confirmada</h1>
 <p>Gracias por tu compra. Aquí tienes los detalles de tu pedido:</p>
-<!-- Mostrar detalles de la orden aquí -->
+<h1>Order created</h1>
+<p>Total: ${{ order.get_total_cost }}</p>
+<ul>
+  {% if cart_products %}
+        	{% for product in cart_products %}
+  {% endfor %}
+  {% endif %}
+</ul>
 {% endblock %}

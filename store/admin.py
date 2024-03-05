@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Customer, Product, Order, Profile
+from .models import Category, Customer, Product, Order, Profile, OrderItem
 from django.contrib.auth.models import User
 
 # registramos modelos en la seccion de admin
@@ -8,7 +8,7 @@ admin.site.register(Customer)
 admin.site.register(Product)
 admin.site.register(Order)
 admin.site.register(Profile)
-
+admin.site.register(OrderItem)
 
 # Mostrar User y Profile en la misma página que la información del usuario.
 class ProfileInline(admin.StackedInline):
@@ -24,3 +24,4 @@ class UserAdmin(admin.ModelAdmin):
 admin.site.unregister(User)
 
 admin.site.register(User, UserAdmin)
+

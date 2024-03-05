@@ -183,10 +183,13 @@ def order_create(request):
         if form.is_valid():
             order = form.save(commit=False)
             order.save()
-            for item in cart:
-                OrderItem.objects.create(order=order, product=item['product'], price=item['price'], quantity=item['quantity'])
-            cart.clear()
-            # Aquí puedes agregar lógica adicional, como enviar un correo electrónico al cliente o al administrador
+            products = cart.get_prods()
+            total = cart.cart_total()
+            quantities = cart.get_quants()
+
+            for product, quantity in zip(products, quantities):
+                OrderItem.objects.create(order=order, product=product, price=product.price, quantity=quantity)
+
             return render(request, 'order_created.html', {'order': order})
     else:
         form = OrderCreateForm()
