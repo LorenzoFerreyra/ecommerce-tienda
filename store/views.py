@@ -10,6 +10,7 @@ from django import forms
 from django.db.models import Q
 import json
 from cart.cart import Cart
+import requests
 
 
 def search(request):
@@ -181,17 +182,37 @@ def order_create(request):
     if request.method == 'POST':
         form = OrderCreateForm(request.POST)
         if form.is_valid():
-            order = form.save(commit=False)
-            order.save()
-            
-            products = cart.get_prods()
-            quantities = cart.get_quants()
-            
-            for product in products:
-                quantity = quantities[str(product.id)]
-                OrderItem.objects.create(order=order, product=product, price=product.price, quantity=quantity)
-            
-            return render(request, 'order_created.html', {'order': order, 'cart': cart})
+            dni = form.cleaned_data['dni']  # Obtener el DNI del formulario
+            # Realizar la consulta a la API de RENIEC
+            api_url = f"https://api.apis.net.pe/v2/reniec/dni?numero={dni}"
+            headers = {"Authorization": "Bearer apis-token-7658.ff96nXWNy0s4UIITUvpFH3fTOYzq2t6o"}
+            response = requests.get(api_url, headers=headers)
+            if response.status_code == 200:
+                data = response.json()
+                # Procesar la respuesta de la API
+                # Por ejemplo, podrías obtener el nombre y apellido del DNI consultado
+                first_name = data.get('nombres', '')
+                last_name = data.get('apellidoPaterno', '') + ' ' + data.get('apellidoMaterno', '')
+                
+                # Continuar con la creación de la orden
+                order = form.save(commit=False)
+                order.first_name = first_name
+                order.last_name = last_name
+                order.save()
+                
+                products = cart.get_prods()
+                quantities = cart.get_quants()
+                
+                for product in products:
+                    quantity = quantities[str(product.id)]
+                    OrderItem.objects.create(order=order, product=product, price=product.price, quantity=quantity)
+                
+                return render(request, 'order_created.html', {'order': order, 'cart': cart})
+            else:
+                messages.success("DNI inválido. Inténtelo de nuevo.")
+                # Por ejemplo, mostrar un mensaje de error al usuario
+                error_message = "Error al consultar la API de RENIEC. Por favor, intenta nuevamente más tarde."
+                return render(request, 'order_create.html', {'cart': cart, 'form': form, 'error_message': error_message})
     else:
         form = OrderCreateForm()
 

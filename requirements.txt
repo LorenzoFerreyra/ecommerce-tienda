@@ -7,3 +7,4 @@ certifi
 pandas
 Pillow
 django-admin-charts
+requests
