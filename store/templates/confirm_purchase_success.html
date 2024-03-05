@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de Compra</title>
+</head>
+<body>
+    <div class="container">
+        <h1>¡Compra confirmada!</h1>
+        <p>Gracias por tu compra. Aquí tienes los detalles de tu pedido:</p>
+        <ul>
+            <li><strong>Producto:</strong> {{ order.product }}</li>
+            <li><strong>Cantidad:</strong> {{ order.quantity }}</li>
+            <li><strong>Dirección de envío:</strong> {{ order.address }}</li>
+            <li><strong>Teléfono:</strong> {{ order.phone }}</li>
+            <li><strong>Método de pago:</strong> {{ order.payment_method }}</li>
+            <!-- Puedes agregar más detalles según sea necesario -->
+        </ul>
+        <p>Para cualquier consulta, no dudes en ponerte en contacto con nosotros.</p>
+    </div>
+</body>
+</html>

@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .forms import SignUpForm, UpdateUserForm, ChangePasswordForm, UserInfoForm
+from .forms import SignUpForm, UpdateUserForm, ChangePasswordForm, UserInfoForm, ConfirmPurchaseForm
 from django import forms
 from django.db.models import Q
 import json
@@ -88,11 +88,11 @@ def category_summary(request):
 	return render(request, 'category_summary.html', {"categories":categories})	
 
 def category(request, foo):
-	# Replace Hyphens with Spaces
+	# reemplazamos guiones con espacios
 	foo = foo.replace('-', ' ')
-	# Grab the category from the url
+	# sacamos la categoria de la url
 	try:
-		# Look Up The Category
+		# y buscamos la categoria
 		category = Category.objects.get(name=foo)
 		products = Product.objects.filter(category=category)
 		return render(request, 'category.html', {'products':products, 'category':category})
@@ -173,3 +173,20 @@ def register_user(request):
 			return redirect('register')
 	else:
 		return render(request, 'register.html', {'form':form})
+	
+
+def confirm_purchase(request):
+    if request.method == 'POST':
+        form = ConfirmPurchaseForm(request.POST)
+        if form.is_valid():
+            # aquíse procesan los datos del formulario
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            ID = form.cleaned_data['ID']
+            payment_method = form.cleaned_data['payment_method']
+            # Luego se llevan adelante las acciones necesarias con estos datos
+            # (por ejemplo, guardarlos en la base de datos, crear una venta, etc.)
+            return render(request, 'confirm_purchase_success.html')
+    else:
+        form = ConfirmPurchaseForm()
+    return render(request, 'confirm_purchase.html', {'form': form})

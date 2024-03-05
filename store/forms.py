@@ -87,3 +87,12 @@ class SignUpForm(UserCreationForm):
 		self.fields['password2'].widget.attrs['placeholder'] = 'Confirmar Contraseña'
 		self.fields['password2'].label = ''
 		self.fields['password2'].help_text = '<span class="form-text text-muted"><small>Ingrese la misma contraseña que antes, para verificación.</small></span>'
+
+
+# Formulario de confirmacion de compra para el cliente de salón
+
+class ConfirmPurchaseForm(forms.Form):
+    first_name = forms.CharField(label="Nombre", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Nombre'}))
+    last_name = forms.CharField(label="Apellido", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Apellido'}))
+    ID = forms.CharField(label="ID", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'ID'}))
+    payment_method = forms.CharField(label="Método de pago", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Método de pago'}))
