@@ -4,6 +4,7 @@ from store.models import Product
 from django.http import JsonResponse
 from django.contrib import messages
 
+
 def cart_summary(request):
 	# obtenemos el carrito
 	cart = Cart(request)
@@ -63,4 +64,3 @@ def cart_update(request):
 		response = JsonResponse({'qty':product_qty})
 		messages.success(request, ("Carrito actualizado."))
 		return response
-

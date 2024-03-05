@@ -1,4 +1,6 @@
 from store.models import Product, Profile
+from django.conf import settings
+from django.http import JsonResponse
 
 class Cart():
 	def __init__(self, request):
@@ -147,3 +149,12 @@ class Cart():
 			carty = carty.replace("\'", "\"")
 			# guardamos carty a Profile
 			current_user.update(old_cart=str(carty))
+	def clear_cart(self):
+		if self.cart:
+			self.cart = {}
+			self.session.modified = True
+				# Se devuelve una respuesta JSON con un mensaje indicando que el carrito se ha vaciado
+				
+		else:
+			return JsonResponse({'message': 'El carrito ya está vacío.'})
+        

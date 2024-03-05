@@ -206,7 +206,7 @@ def order_create(request):
                 for product in products:
                     quantity = quantities[str(product.id)]
                     OrderItem.objects.create(order=order, product=product, price=product.price, quantity=quantity)
-                
+                cart.clear_cart()
                 return render(request, 'order_created.html', {'order': order, 'cart': cart})
             else:
                 messages.success(request, ("DNI inválido. Inténtelo de nuevo."))
