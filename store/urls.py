@@ -14,5 +14,5 @@ urlpatterns = [
     path('category/<str:foo>', views.category, name='category'),
     path('category_summary/', views.category_summary, name='category_summary'),
     path('search/', views.search, name='search'),
-    path('confirm_purchase/', views.confirm_purchase, name='confirm_purchase'),
+    path('order_create/', views.order_create, name='order_create'),
 ]

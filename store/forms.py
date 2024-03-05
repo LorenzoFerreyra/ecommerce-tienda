@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, SetPasswordForm
 from django import forms
-from .models import Profile
+from .models import Profile, Order
 
 # Aquí se crean las clases de los formularios necesarios para la tienda
 # nótese que todos ellos cruzan su lógica con los atributos de bootstrap, de ahí su complejidad
@@ -89,10 +89,9 @@ class SignUpForm(UserCreationForm):
 		self.fields['password2'].help_text = '<span class="form-text text-muted"><small>Ingrese la misma contraseña que antes, para verificación.</small></span>'
 
 
-# Formulario de confirmacion de compra para el cliente de salón
+# Formulario de orden de compra para el cliente de salón
 
-class ConfirmPurchaseForm(forms.Form):
-    first_name = forms.CharField(label="Nombre", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Nombre'}))
-    last_name = forms.CharField(label="Apellido", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Apellido'}))
-    ID = forms.CharField(label="ID", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'ID'}))
-    payment_method = forms.CharField(label="Método de pago", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Método de pago'}))
+class OrderCreateForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['first_name', 'last_name', 'email', 'address', 'postal_code', 'city']

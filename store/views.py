@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
-from .models import Product, Category, Profile
+from .models import Product, Category, Profile, OrderItem, Order
+from cart.views import cart_summary
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .forms import SignUpForm, UpdateUserForm, ChangePasswordForm, UserInfoForm, ConfirmPurchaseForm
+from .forms import SignUpForm, UpdateUserForm, ChangePasswordForm, UserInfoForm, OrderCreateForm
 from django import forms
 from django.db.models import Q
 import json
@@ -175,20 +176,19 @@ def register_user(request):
 		return render(request, 'register.html', {'form':form})
 	
 
-def confirm_purchase(request):
+def order_create(request):
+    cart = Cart(request)
     if request.method == 'POST':
-        form = ConfirmPurchaseForm(request.POST)
+        form = OrderCreateForm(request.POST)
         if form.is_valid():
-            # Aquí se procesan los datos del formulario
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
-            ID = form.cleaned_data['ID']
-            payment_method = form.cleaned_data['payment_method']
-            # Luego se llevan adelante las acciones necesarias con estos datos
-            # (por ejemplo, guardarlos en la base de datos, crear una venta, etc.)
-            messages.success(request, "Venta ingresada con éxito.")
-            return redirect('home')
+            order = form.save(commit=False)
+            order.save()
+            for item in cart:
+                OrderItem.objects.create(order=order, product=item['product'], price=item['price'], quantity=item['quantity'])
+            cart.clear()
+            # Aquí puedes agregar lógica adicional, como enviar un correo electrónico al cliente o al administrador
+            return render(request, 'order_created.html', {'order': order})
     else:
-        form = ConfirmPurchaseForm()
+        form = OrderCreateForm()
 
-    return render(request, 'confirm_purchase.html', {'form': form})
+    return render(request, 'order_create.html', {'cart': cart, 'form': form})
