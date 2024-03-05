@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+{% block content %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +17,9 @@
             <li><strong>Teléfono:</strong> {{ order.phone }}</li>
             <li><strong>Método de pago:</strong> {{ order.payment_method }}</li>
         </ul>
-        <p>Para cualquier consulta, no dudes en ponerte en contacto con nosotros.</p>
+        <p>Solo resta finalizar la compra y generar el PDF correspondiente.</p>
     </div>
 </body>
 </html>
+
+{% endblock %}
