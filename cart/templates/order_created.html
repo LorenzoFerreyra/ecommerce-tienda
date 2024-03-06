@@ -2,29 +2,42 @@
 
 {% block content %}
 <style>
+    .content-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
     .confirmation-container {
-        max-width: 600px; 
+        max-width: 600px;
         margin: auto;
         padding: 20px;
         border: 1px solid #ddd;
         border-radius: 8px;
         background-color: #f9f9f9;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
+
     h1 {
         text-align: center;
         color: #333;
         margin-bottom: 20px;
     }
+
     p, li {
         color: #555;
         line-height: 1.6;
     }
+
     ul {
         list-style-type: none; /* Removes the default list styling */
         padding: 0;
     }
-  
+
     .total {
         text-align: center;
         font-weight: bold;
@@ -32,20 +45,22 @@
     }
 </style>
 
-<div class="confirmation-container">
-    <h1>Orden confirmada</h1>
-    <p>Gracias por tu compra. Aquí tienes los detalles de tu pedido:</p>
-    <ul>
-      {% for item in order.items.all %}
-        <li>
-          Producto: {{ item.product.name }}<br>
-          Precio unitario: ${{ item.price }}<br>
-          Cantidad: {{ item.quantity }}<br>
-          Precio total: ${{ item.get_cost }}
-        </li>
-      {% endfor %}
-    </ul>
-    <p class="total">Total de la orden: ${{ order.get_total_cost }}</p>
+<div class="content-container">
+    <div class="confirmation-container">
+        <h1>Orden confirmada</h1>
+        <p>Gracias por tu compra. Aquí tienes los detalles de tu pedido:</p>
+        <ul>
+            {% for item in order.items.all %}
+            <li>
+                Producto: {{ item.product.name }}<br>
+                Precio unitario: ${{ item.price }}<br>
+                Cantidad: {{ item.quantity }}<br>
+                Precio total: ${{ item.get_cost }}
+            </li>
+            {% endfor %}
+        </ul>
+        <p class="total">Total de la orden: ${{ order.get_total_cost }}</p>
+    </div>
 </div>
 {% endblock %}
 
