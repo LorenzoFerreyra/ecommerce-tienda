@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
-import requests
+import requests, uuid
 
 
 # Modelo para perfil
@@ -89,7 +89,7 @@ class Product(models.Model):
 
 # orden de compra
 class Order(models.Model):
-    id = models.AutoField(primary_key=True, editable=False)    
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4,unique=True, max_length=36)    
     first_name = models.CharField(max_length=50, default="Cliente")
     last_name = models.CharField(max_length=50, default="Al mostrador")
     dni = models.IntegerField(default="71449234")
