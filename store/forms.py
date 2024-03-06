@@ -95,3 +95,12 @@ class OrderCreateForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['first_name', 'last_name', 'dni','email', 'address', 'postal_code', 'city']
+        labels = {
+            'first_name': 'Nombre', 
+            'last_name': 'Apellido',
+            'dni': 'DNI',
+            'email': 'Correo electrónico',
+            'address': 'Dirección',
+            'postal_code': 'Código postal',
+            'city': 'Ciudad',
+        }
