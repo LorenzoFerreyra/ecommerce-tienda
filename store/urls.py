@@ -15,4 +15,5 @@ urlpatterns = [
     path('category_summary/', views.category_summary, name='category_summary'),
     path('search/', views.search, name='search'),
     path('order_create/', views.order_create, name='order_create'),
+    path('validate_dni/', views.validate_dni, name='validate_dni'),
 ]
