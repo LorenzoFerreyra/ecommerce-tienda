@@ -21,6 +21,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
 
+    'django_light',
     'admin_tools_stats',
     'django_nvd3',
     'django.contrib.admin',
