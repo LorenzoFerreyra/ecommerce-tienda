@@ -29,7 +29,7 @@
 
     .card-header,
     .btn-secondary {
-        background-color: #1b5244; /* A softer dark background */
+        background-color: #692b13; /* A softer dark background */
         color: white;
     }
 
@@ -93,9 +93,11 @@
                     <form method="POST" action="{% url 'search' %}">
                         {% csrf_token %}
                         <input type="text" class="form-control" placeholder="Buscar por Producto" name="searched">
+                        <div class="d-flex justify-content-center align-items-center">
                         <button type="submit" class="btn btn-secondary mt-3">
                             Buscar productos
                         </button>
+                        </div>
                     </form>
                 </div>
             </div>

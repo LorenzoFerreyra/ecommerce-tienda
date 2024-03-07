@@ -18,11 +18,11 @@
         <h5 class="card-title">{{ product.name }}</h5>
         <br/>
         <p class="card-text justified">{{ product.description }}</p>
-        
+      
         {% if product.is_sale %}
         <div class="d-flex justify-content-center small text-warning mb-2">
                 <div class="bi-star-fill"></div>
-                &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                &nbsp;&nbsp;¡En oferta!&nbsp;&nbsp;
                 <div class="bi-star-fill"></div>
                 </div>
 
@@ -32,12 +32,13 @@
                 </strike>
                 &nbsp;
                 ${{ product.sale_price }}
+                <p class="card-text justified">Contáctenos al +51 926 780 600 o visítenos en Jr. San Martín de Porres 108, Huánuco. ¡Lo esperamos!</p>
 
 
 
         {% else %}
             ${{ product.price }}
-            
+            <p class="card-text justified">Contáctenos al +51 926 780 600 o visítenos en Jr. San Martín de Porres 108, Huánuco. ¡Lo esperamos!</p>
         {% endif %}
             <br/><br/>
             {% if user.is_authenticated %}
