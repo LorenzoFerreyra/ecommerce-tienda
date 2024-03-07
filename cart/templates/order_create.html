@@ -53,13 +53,13 @@
     }
 
     button:hover {
-        background-color: #692b13;
+        background-color: #752f14;
     }
 </style>
 
 <div class="form-container">
     <h1>Confirmación de compra</h1>
-    <form method="post">
+    <form method="post" id="OrderCreateForm">
         {% csrf_token %}
         
         <!-- Campo de entrada del DNI con botón de Validar -->
@@ -69,8 +69,8 @@
                 {{ form.dni }}
             </div>
             <div class="col-sm-6">
-                <button href="{% url 'validate_dni' %}" type="button" class="btn btn-outline-secondary btn-block">Validar</button>
-            </div>
+                <button type="button" form="OrderCreateForm" class="btn btn-outline-secondary btn-block">Validar</button>
+            </div>            
         </div>
 
         <!-- Otros campos del formulario -->

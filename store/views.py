@@ -220,8 +220,7 @@ def validate_dni(request):
                 messages.error(request, "DNI inválido. Inténtelo de nuevo.")
         else:
             messages.error(request, "Formulario inválido. Por favor, complete los campos correctamente.")
-            return redirect('order_create')
     else:
-        # Si la solicitud no es de tipo POST, redirige a la página de creación de orden
+        # Si la solicitud no es de tipo POST, crea un formulario vacío
         form = OrderCreateForm()
-        return render(request, 'validate_dni.html', {'form': form})
+    return render(request, 'validate_dni.html', {'form': form})

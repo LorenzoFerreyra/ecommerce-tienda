@@ -72,7 +72,6 @@
             </div>
             <br/><br/>
         <a href="{% url 'home'%}" class="btn btn-secondary">Inicio</a>
-        <button type="button" data-index="{{product.id}}" class="btn btn-secondary update-cart">Actualizar</button>
         <button type="button" data-index="{{product.id}}" class="btn btn-danger delete-product">Quitar</button>
         
     </center>
@@ -84,7 +83,9 @@
 
 
         	{% endfor %}
+          <div class="text-center mt-3">
             <h3>En total es ${{ totals }}</h3>
+        </div>        
           <!-- Botón "Confirmar compra" -->
 <div class="text-center mt-3">
   <a href="{% url 'order_create' %}" class="btn btn-secondary">Confirmar compra</a>
@@ -102,34 +103,29 @@
 
 <script>
 // Update Cart
-$(document).on('click', '.update-cart', function(e){
-    e.preventDefault();
-    // grab the product id
-    var productid = $(this).data('index');
+// Actualizar carrito en tiempo real
+$(document).on('change', '.form-select', function() {
+  // grab the product id
+  var productid = $(this).attr('id').replace('select', '');
 
-    $.ajax({
-    type: 'POST',
-    url: '{% url 'cart_update' %}',
-    data: {
-      product_id: $(this).data('index'),
-      product_qty: $('#select' + productid + ' option:selected').text(),
-      csrfmiddlewaretoken: '{{ csrf_token }}',
-      action: 'post'
-    },
-    success: function(json){
-        //console.log(json)
-        //document.getElementById("cart_quantity").textContent = json.qty
-        location.reload();
-    },
-
-    error: function(xhr, errmsg, err){
-
-    }
-
-
-    });
-
-})
+  $.ajax({
+      type: 'POST',
+      url: '{% url 'cart_update' %}',
+      data: {
+          product_id: productid,
+          product_qty: $(this).val(),
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          action: 'post'
+      },
+      success: function(json) {
+          // esto se hace para recargar la página o actualizar el precio total del producto si es necesario
+          location.reload(); // O puedes actualizar solo partes específicas de la página según lo necesario
+      },
+      error: function(xhr, errmsg, err) {
+          // Manejo de errores (no utilizado)
+      }
+  });
+});
 
 // Delete Item From Cart
 $(document).on('click', '.delete-product', function(e){
