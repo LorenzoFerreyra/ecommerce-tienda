@@ -10,3 +10,4 @@ django-admin-charts
 requests
 django-import-export
 django-light
+reportlab
