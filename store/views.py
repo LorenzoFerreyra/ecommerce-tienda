@@ -11,6 +11,7 @@ from django.db.models import Q
 import json
 from cart.cart import Cart
 import requests
+from django.http import JsonResponse
 
 
 def search(request):
@@ -177,50 +178,52 @@ def register_user(request):
 		return render(request, 'register.html', {'form':form})
 	
 
+from .models import OrderItem
+
 def order_create(request):
+    cart = Cart(request)
     if request.method == 'POST':
         form = OrderCreateForm(request.POST)
         if form.is_valid():
-            order = form.save(commit=False)
-            order.save()
-            
-            cart = Cart(request)
+            order = form.save() 
+
             products = cart.get_prods()
             quantities = cart.get_quants()
-            
             for product in products:
                 quantity = quantities[str(product.id)]
                 OrderItem.objects.create(order=order, product=product, price=product.price, quantity=quantity)
+
             cart.clear_cart()
             return render(request, 'order_created.html', {'order': order, 'cart': cart})
         else:
-            messages.error(request, "Formulario inválido. Por favor, complete los campos correctamente.")
-            return redirect('order_create')
+            # Manejar el caso en que el formulario no sea válido
+            return render(request, 'order_create.html', {'cart': cart, 'form': form})
     else:
-        # Si la solicitud no es de tipo POST, redirige a la página de creación de orden
         form = OrderCreateForm()
-        return render(request, 'order_create.html', {'form': form})
+        return render(request, 'order_create.html', {'cart': cart, 'form': form})
 
 
-def validate_dni(request):
+def consultar_dni(request):
     if request.method == 'POST':
-        form = OrderCreateForm(request.POST)
-        if form.is_valid():
-            dni = form.cleaned_data['dni']
-            api_url = f"https://api.apis.net.pe/v2/reniec/dni?numero={dni}"
-            headers = {"Authorization": "Bearer apis-token-7658.ff96nXWNy0s4UIITUvpFH3fTOYzq2t6o"}
-            response = requests.get(api_url, headers=headers)
-            if response.status_code == 200:
-                data = response.json()
-                first_name = data.get('nombres', '')
-                last_name = data.get('apellidoPaterno', '') + ' ' + data.get('apellidoMaterno', '')
-                # Mostrar los datos del DNI para que el usuario pueda revisarlos
-                return render(request, 'validate_dni.html', {'form': form, 'first_name': first_name, 'last_name': last_name})
-            else:
-                messages.error(request, "DNI inválido. Inténtelo de nuevo.")
+        dni = request.POST.get('dni', '')
+
+        # Verificar la longitud del DNI
+        if len(dni) != 8:
+            return JsonResponse({'error': 'El DNI debe tener 8 caracteres'})
+
+        # Realizar la solicitud a la API
+        api_url = f'https://api.apis.net.pe/v1/dni?numero={dni}'
+        response = requests.get(api_url)
+
+        if response.status_code == 200:
+            data = response.json()
+            # Obtener el nombre y el apellido de la respuesta de la API
+            first_name = data.get('nombres', '')
+            last_name = data.get('apellidoPaterno', '') + ' ' + data.get('apellidoMaterno', '')
+
+            # Devolver los datos obtenidos de la API como respuesta JSON
+            return JsonResponse({'first_name': first_name, 'last_name': last_name})
         else:
-            messages.error(request, "Formulario inválido. Por favor, complete los campos correctamente.")
-    else:
-        # Si la solicitud no es de tipo POST, crea un formulario vacío
-        form = OrderCreateForm()
-    return render(request, 'validate_dni.html', {'form': form})
+            return JsonResponse({'error': 'Error al consultar la API de RENIEC'})
+
+    return JsonResponse({'error': 'Método no permitido'})
