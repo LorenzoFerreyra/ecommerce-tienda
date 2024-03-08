@@ -1,17 +1,23 @@
 from django.shortcuts import render, redirect
 from .models import Product, Category, Profile, OrderItem, Order
-from cart.views import cart_summary
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
 from .forms import SignUpForm, UpdateUserForm, ChangePasswordForm, UserInfoForm, OrderCreateForm
-from django import forms
 from django.db.models import Q
 import json
 from cart.cart import Cart
 import requests
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse, HttpResponse
+import tempfile
+import os
+import datetime
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.enums import TA_CENTER
+from reportlab.platypus import Spacer, SimpleDocTemplate, Table, TableStyle, Paragraph, Image
+
 
 
 def search(request):
@@ -192,8 +198,11 @@ def order_create(request):
             for product in products:
                 quantity = quantities[str(product.id)]
                 OrderItem.objects.create(order=order, product=product, price=product.price, quantity=quantity)
-
+            detalle_productos = OrderItem.objects.filter(order=order)
             cart.clear_cart()
+            numerodecomprobante = order.id
+            nombre_cliente = order.first_name + ' ' + order.last_name
+            crearpdf(nombre_cliente, detalle_productos, numerodecomprobante)
             return render(request, 'order_created.html', {'order': order, 'cart': cart})
         else:
             # Manejar el caso en que el formulario no sea válido
@@ -227,3 +236,132 @@ def consultar_dni(request):
             return JsonResponse({'error': 'Error al consultar la API de RENIEC'})
 
     return JsonResponse({'error': 'Método no permitido'})
+
+
+def crearpdf(nombre_cliente, detalle_productos, numerodecomprobante):
+    documento_pdf = []
+    fec_hoy = datetime.date.today()
+    hoy = fec_hoy.strftime("%d/%m/%Y")
+
+    style_sheet = getSampleStyleSheet()
+    img = Image("static/assets/furniture.jpg", 120, 80)
+
+    documento_pdf.append(Spacer(0, 50))
+
+    estilo_monto_total = ParagraphStyle('', fontSize=10, textColor='#000', rightIndent=0, alignment=TA_CENTER)
+    estilo_encabezado_2 = ParagraphStyle('', fontSize=10, textColor='#000', alignment=TA_CENTER)
+    estilo_encabezado_1 = ParagraphStyle('', fontSize=6, textColor='#000', alignment=TA_CENTER)
+    estilo_texto = ParagraphStyle('', fontSize=8, alignment=0, spaceBefore=0, spaceAfter=0, textColor='#000',
+                                   leftIndent=0)
+    encabezado1 = [Paragraph("<b>Jr. San Martín de Porres # 108  / Cel.: +51 926 780 600</b><br/><b> "
+                             + "Huánuco - Perú - E-mail: unicoarturo@hotmail.com</b>",
+                             estilo_encabezado_1)]
+
+    encabezado2a = [Paragraph("<b>COMPROBANTE N° " + str(numerodecomprobante) + "</b>", estilo_encabezado_2)]
+
+    encabezado2b = [Paragraph("<b>Fecha:   " + str(hoy) + "</b>", estilo_encabezado_2)]
+
+    t_encabezado = [[img, encabezado2a], [encabezado1, encabezado2b]]
+
+    tabla_encabezado = Table(t_encabezado, 242.5)
+    tabla_encabezado.setStyle(TableStyle([
+        ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.transparent),
+        ('ALIGNMENT', (0, 0), (0, 0), 'CENTER'),
+        ('TOPPADDING', (0, 0), (0, 0), 13),
+        ('BOTTOMPADDING', (0, 1), (-1, 1), 13),
+        ('LINEBEFORE', (1, 0), (1, -1), 1, colors.black),
+        ('BOX', (0, 0), (-1, -1), 1, colors.black),
+        ('BACKGROUND', (0, 0), (-1, 1), colors.transparent),
+        ('BACKGROUND', (1, 1), (-1, 1), colors.transparent),
+        ('VALIGN', (0, 1), (-1, 1), 'TOP')
+    ]))
+    documento_pdf.append(tabla_encabezado)
+
+    documento_pdf.append(Spacer(0, -17.5))
+    t_cliente = [[Paragraph('''<font size=8> <b> </b></font>''', style_sheet["BodyText"])],
+                 [Paragraph('<font size=8> <b>Cliente: ' + nombre_cliente + '</b></font>', estilo_texto)]]
+
+    tabla_cliente = Table(t_cliente, 485)
+    tabla_cliente.setStyle(TableStyle([
+        ('INNERGRID', (0, 1), (-1, -1), 0.25, colors.black),
+        ('BOX', (0, 1), (-1, -1), 0.25, colors.black),
+        ('BACKGROUND', (0, 1), (-1, 1), colors.white)
+    ]))
+    documento_pdf.append(tabla_cliente)
+
+    productos_table = [[Paragraph('''<font size=9> <b> </b></font>''', style_sheet["BodyText"])],
+                       [Paragraph('''<font size=9> <b> </b>Precio</font>''', estilo_texto,),
+                        Paragraph('''<font size=9> <b> </b>Cantidad</font>''', estilo_texto),
+                        Paragraph('''<font size=9> <b> </b>Producto</font>''', estilo_texto),
+                        Paragraph('''<font size=9> <b> </b>Subtotal</font>''', estilo_texto)]]
+    subtotal_list = []
+    for detalle in detalle_productos:
+        producto = detalle.product
+        precio = detalle.price
+        cantidad = detalle.quantity
+        subtotal = cantidad * precio
+        subtotal_list.append(subtotal)
+    
+        estilocantidad = " <font size=8>" + str(cantidad) + "</font>"
+        estiloprecio = " <font size=8>" + str(precio) + "</font>"
+        estiloproducto = " <font size=8>" + str(producto) + "</font>"
+        estilosubtotal = " <font size=8>" + str(subtotal) + "</font>"
+        estilo_texto1 = ParagraphStyle('', fontSize=8, alignment=TA_CENTER, spaceBefore=0, spaceAfter=0,
+                                       textColor='#000',
+                                       leftIndent=0)
+        productos_table.append([Paragraph("<b>S/." + str(estiloprecio) + " </b>", estilo_texto),
+                                Paragraph(estilocantidad, estilo_texto1),
+                                Paragraph(estiloproducto, estilo_texto),
+                                Paragraph("<b>S/." + str(estilosubtotal) + " </b>", estilo_texto)])
+
+    tabla_productos = Table(productos_table, (85, 40, 300, 60))
+    tabla_productos.setStyle(TableStyle([
+        ('INNERGRID', (0, 1), (-1, -1), 0.25, colors.black),
+        ('BOX', (0, 1), (-1, -1), 0.25, colors.white),
+        ('BACKGROUND', (0, 1), (-1, 1), colors.white)
+    ]))
+    documento_pdf.append(tabla_productos)
+    precio_total = sum(subtotal_list)
+	
+    monto_total = [[Paragraph('''<font size=8> <b> </b></font>''', style_sheet["BodyText"]),
+                    Paragraph("", estilo_monto_total),
+                    Paragraph("", estilo_monto_total),
+                    Paragraph("<b>TOTAL: S/." + str(precio_total) + " </b>", estilo_monto_total)]]
+
+    importe_final = Table(monto_total, (30, 20, 300, 150))
+    importe_final.setStyle(TableStyle([
+        ('BOX', (-1, -1), (-1, -1), 0.25, colors.lightgrey),
+        ('BACKGROUND', (-1, -1), (-1, -1), colors.lightgrey)
+    ]))
+    documento_pdf.append(importe_final)
+
+    documento_pdf.append(Spacer(0, 50))
+
+    fecha_de_hoy = str(datetime.date.today().day) + "-" + str(datetime.date.today().month) + "-"\
+                    + str(datetime.date.today().year)
+
+    file_path = os.path.dirname(os.path.abspath(__file__)) + "/pdf/" + fecha_de_hoy
+
+    print(file_path)
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+
+ 
+    hora_actual = datetime.datetime.now()
+    hora_de_hoy = str(hora_actual.hour) + "-" + str(hora_actual.minute) + "-"\
+        + str(hora_actual.second)
+    doc = SimpleDocTemplate(file_path + "/comprobante " + str(nombre_cliente) + "_"
+        + fecha_de_hoy + "_" + hora_de_hoy
+        + ".pdf", pagesize=A4, rightMargin=14, leftMargin=14, topMargin=5, bottomMargin=18)
+    doc.build(documento_pdf)
+    
+    
+    
+
+    with open(doc.filename, 'rb') as temp_pdf_file:
+        response = HttpResponse(temp_pdf_file.read(), content_type='application/pdf')
+
+    # Establecer los encabezados de respuesta
+    response['Content-Disposition'] = 'inline; filename=comprobante.pdf'
+
+    return response
