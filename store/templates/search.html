@@ -76,7 +76,7 @@
 <header class="search-header">
     <div class="container px-4 px-lg-5 my-5">
         <div class="text-center">
-            <h1 class="display-4 fw-bolder">Buscar productos</h1>
+            <h1 class="display-4 fw-bolder">Buscar Productos</h1>
             <p class="lead fw-normal mb-0">Encuentre lo que busque</p>
         </div>
     </div>
@@ -87,15 +87,15 @@
         <div class="col-12 col-md-8">
             <div class="card">
                 <div class="card-header">
-                    Buscar productos
+                    Inicia Tu Descubrimiento :)
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{% url 'search' %}">
                         {% csrf_token %}
-                        <input type="text" class="form-control" placeholder="Buscar por Producto" name="searched">
+                        <input type="text" class="form-control" placeholder="Encuentre su ideal..." name="searched">
                         <div class="d-flex justify-content-center align-items-center">
                         <button type="submit" class="btn btn-secondary mt-3">
-                            Buscar productos
+                            Buscar 
                         </button>
                         </div>
                     </form>
