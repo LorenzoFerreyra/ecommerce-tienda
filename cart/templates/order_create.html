@@ -21,6 +21,7 @@
 
     form {
         text-align: left; /* Para alinear el texto del formulario a la izquierda */
+        
     }
 
     form p {
@@ -68,16 +69,30 @@
                 
                 <!-- Botón para consultar el DNI -->
                 <button type="button" id="btn-consultar">Validar DNI</button>
+
+                <br>
+                </br>
         
                 <!-- Contenedor para mostrar la respuesta -->
         
                 <!-- Campos de nombre y apellido (estos campos serán ocultos) -->
-                <input id="id_first_name" name="first_name">
-                <input id="id_last_name" name="last_name">
-                <input name='email' placeholder="Correo electrónico">
-                <input name='address' placeholder="Dirección">
-                <input name='postal_code' placeholder="Código postal">
-                <input name='city' placeholder="Ciudad">
+                <div class="form-field">
+                    <input id="id_first_name" name="first_name">
+                    
+                    <input id="id_last_name" name="last_name">
+                  </div>
+                  <br>
+                </br>
+                  <!-- Campos de correo electrónico y dirección con espacio adicional -->
+                  <div class="form-field">
+                    <input type="email" name="email" placeholder="Correo electrónico" >
+                    <input type="text" name="address" placeholder="Dirección" >
+                  </div>
+                  <!-- Campos de código postal y ciudad con espacio adicional -->
+                  <div class="form-field">
+                    <input type="text" name="postal_code" placeholder="Código postal" >
+                    <input type="text" name="city" placeholder="Ciudad" >
+                  </div>
                 <!-- Botón para confirmar la orden -->
                 <button type="submit">Confirmar orden</button>
             </form>
