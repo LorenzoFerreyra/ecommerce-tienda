@@ -11,3 +11,4 @@ requests
 django-import-export
 django-light
 reportlab
+sqlite3
