@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-x4m$gfeda-r+)u05g*bzm%8#_vz&8-wl^3epo45gqi#_eqwvtq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.vercel.app', '.now.sh', '127.0.0.1','localhost']
 
 
 # Agregamos store, cart y payment, las apps del proyecto central ecom
